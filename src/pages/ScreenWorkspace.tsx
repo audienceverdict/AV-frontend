@@ -1,0 +1,10 @@
+import {type FormEvent} from 'react';
+import {Link, useParams} from 'react-router-dom';
+import {ArrowLeft, Save, Settings2} from 'lucide-react';
+import {useApp} from '../context/AppContext';
+import {repositories} from '../services/api';
+import {LayoutBuilder} from './LayoutBuilder';
+import {Empty, Notice, SectionHeading} from '../components/Common';
+import type {Screen} from '../types';
+
+export function ScreenWorkspace(){const {screenId}=useParams();const {data}=useApp();const screen=data.screens.find(item=>item.id===screenId);if(!screen)return <div className="admin-content"><Empty title="Screen not found."/></div>;const theatre=data.theatres.find(item=>item.id===screen.theatreId);const save=async(event:FormEvent)=>{event.preventDefault();await repositories.screens.save(screen);};const update=(patch:Partial<Screen>)=>repositories.screens.save({...screen,...patch});return <div className="admin-content screen-page"><Link className="text-link" to="/admin/venues"><ArrowLeft size={16}/> Back to {theatre?.name||'Venues'}</Link><SectionHeading eyebrow="SCREEN WORKSPACE" title={screen.name} description={`${theatre?.name||'Theatre'} · Configure details and draw the exact audience seating plan.`}/><section className="panel screen-details"><div className="screen-title"><Settings2/><div><h3>Screen details</h3><p className="muted">Changes are saved for this screen only.</p></div></div><form onSubmit={save}><div className="form-grid"><label>Screen name<input value={screen.name} onChange={event=>update({name:event.target.value})}/></label><label>Screen number<input type="number" min="1" value={screen.number} onChange={event=>update({number:Number(event.target.value)})}/></label><label>Status<select value={screen.status} onChange={event=>update({status:event.target.value as Screen['status']})}><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></label></div><button className="button"><Save size={16}/> Save screen details</button></form></section><LayoutBuilder initialScreenId={screen.id}/><Notice>This is a dedicated page for {screen.name}. Save the seat plan before returning to the venue.</Notice></div>}
