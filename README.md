@@ -11,7 +11,7 @@ Authentication uses email OTP, a name/mobile profile step for new accounts, JWTs
 ```text
 frontend/
 ├── index.html                 Vite HTML entry, title and metadata
-├── vite.config.ts             React plugin and /api -> localhost:8080 proxy
+├── vite.config.ts             React plugin and /api -> configured backend proxy
 ├── package.json               scripts and React/Router/Lucide dependencies
 ├── public/                    static files
 ├── videos and photos/         supplied video, photo and PDF references
@@ -48,7 +48,7 @@ frontend/
         └── brandImages.ts      brand image URLs
 ```
 
-Framework: React 19 + TypeScript. Build/dev tool: Vite 6. Routing: React Router 7. Icons: lucide-react. Styling is hand-written CSS (no Tailwind/SCSS); fonts are DM Sans and Manrope via Google Fonts. Dark charcoal palette, coral accent, rounded cards, gradients, transitions, and reduced-motion rules. No frontend environment variables are read; Vite proxies `/api` to the local backend. Posters/backdrops and some brand images are remote URLs; video/PDF references are in `videos and photos/`. No dedicated hooks directory or reusable carousel exists.
+Framework: React 19 + TypeScript. Build/dev tool: Vite 6. Routing: React Router 7. Icons: lucide-react. Styling is hand-written CSS (no Tailwind/SCSS); fonts are DM Sans and Manrope via Google Fonts. Dark charcoal palette, coral accent, rounded cards, gradients, transitions, and reduced-motion rules. API requests use `VITE_API_BASE_URL` (see `.env.example`); Vite's local `/api` proxy forwards to that API host, defaulting to the production backend URL. Set the variable before building to override the default. Posters/backdrops and some brand images are remote URLs; video/PDF references are in `videos and photos/`. No dedicated hooks directory or reusable carousel exists.
 
 ### Routes and page behavior
 

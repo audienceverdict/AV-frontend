@@ -1,5 +1,6 @@
 import type {User} from '../types';
 const TOKEN_KEY='av_access_token';
+const API_BASE_URL=(import.meta.env.DEV?'/api/v1':import.meta.env.VITE_API_BASE_URL||'/api/v1').replace(/\/$/,'');
 let currentUser:User|null=null;
 let generation=0;
 const notify=()=>window.dispatchEvent(new Event('av-auth-change'));
@@ -7,9 +8,9 @@ const token=()=>localStorage.getItem(TOKEN_KEY)||sessionStorage.getItem(TOKEN_KE
 export class ApiError extends Error {constructor(message:string,public status:number){super(message);}}
 async function request<T>(path:string,options:RequestInit={}):Promise<T>{
  const accessToken=token();
- const response=await fetch(`/api/v1${path}`,{...options,headers:{'Content-Type':'application/json',...(accessToken?{Authorization:`Bearer ${accessToken}`} :{}),...options.headers}});
+ const response=await fetch(`${API_BASE_URL}${path}`,{...options,headers:{Accept:'application/json',...(options.body?{'Content-Type':'application/json'}:{}),...(accessToken?{Authorization:`Bearer ${accessToken}`} :{}),...options.headers}});
  const body=await response.json().catch(()=>null);
- if(!response.ok){if(response.status===401&&accessToken===token())authService.logout();throw new ApiError(body?.message||`Request failed (${response.status})`,response.status);}
+ if(!response.ok){console.error(`[auth] ${options.method||'GET'} ${path} failed (${response.status})`,body??response.statusText);if(response.status===401&&accessToken===token())authService.logout();throw new ApiError(body?.message||body?.error||`Request failed (${response.status})`,response.status);}
  return body as T;
 }
 const mapUser=(u:User):User=>({...u,email:u.email||''});
