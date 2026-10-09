@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import {ArrowLeft, ArrowRight, MapPin, Ticket} from 'lucide-react';
 import {useApp} from '../context/AppContext';
-import {createBooking, createSeatHold, getSeatHolds, getShowAvailability, joinWaitingList} from '../services/api';
+import {createBooking, createSeatHold, getSeatHolds, getShowAvailability, joinWaitingList, loadTheatreScreens} from '../services/api';
 import {Empty, Notice, Poster, SectionHeading, date, money} from '../components/Common';
 import {TheatrePicker} from '../components/TheatrePicker';
 
@@ -21,12 +21,13 @@ export function BookMyShow() {
   const [error, setError] = useState('');
   const [versionSeats,setVersionSeats]=useState<any[]|null>(null); const [backendBooked,setBackendBooked]=useState<string[]>([]);
   const [holdExpiresAt,setHoldExpiresAt]=useState<number|null>(null); const [holdRemaining,setHoldRemaining]=useState(0); const [waitCount,setWaitCount]=useState(1); const [waitBusy,setWaitBusy]=useState(false); const [waitEntry,setWaitEntry]=useState<any|null>(null);
+  useEffect(()=>{const selected=data.shows.find(item=>item.id===showId);if(selected)void loadTheatreScreens([selected.theatreId]).catch(()=>{});},[showId,data.shows]);
   useEffect(()=>{if(!showId){setVersionSeats(null);setBackendBooked([]);return;}let active=true;getShowAvailability(showId).then(result=>{if(active){setBackendBooked(result.bookedSeatIds||[]);setVersionSeats((result.layout?.seats||[]).map((seat:any)=>({...seat,id:seat.id||seat.label,row:seat.row??seat.rowNumber,column:seat.column??seat.columnNumber})));}}).catch(()=>{if(active){setVersionSeats(null);setBackendBooked([]);}});return()=>{active=false;};},[showId]);
   useEffect(()=>{if(!showId||!user){setHoldExpiresAt(null);return;}let active=true;getSeatHolds(showId).then(items=>{if(active)setHoldExpiresAt(items.length?Math.min(...items.map((h:any)=>new Date(h.expiresAt).getTime())):null);}).catch(()=>{});return()=>{active=false;};},[showId,user]);
   useEffect(()=>{if(!holdExpiresAt){setHoldRemaining(0);return;}const tick=()=>setHoldRemaining(Math.max(0,holdExpiresAt-Date.now()));tick();const timer=window.setInterval(tick,1000);return()=>window.clearInterval(timer);},[holdExpiresAt]);
 
   if (!movie || !user) return <Empty title="Movie not found"/>;
-  const shows = data.shows.filter(show => show.movieId === movie.id && show.status === 'OPEN' && new Date(`${show.date}T${show.startTime}`) > new Date() && data.theatres.some(theatre => theatre.id === show.theatreId && theatre.status === 'ACTIVE' && (!nearbyCities || nearbyCities.some(city=>city.includes(theatre.city.toLowerCase())||theatre.city.toLowerCase().includes(city)))) && data.screens.some(screen => screen.id === show.screenId && screen.status === 'ACTIVE'));
+  const shows = data.shows.filter(show => show.movieId === movie.id && show.status === 'OPEN' && new Date(`${show.date}T${show.startTime}`) > new Date() && data.theatres.some(theatre => theatre.id === show.theatreId && theatre.status === 'ACTIVE' && (!nearbyCities || nearbyCities.some(city=>city.includes(theatre.city.toLowerCase())||theatre.city.toLowerCase().includes(city)))));
   const show = shows.find(item => item.id === showId);
   const screen = data.screens.find(item => item.id === show?.screenId);
   const positionedSeats = (versionSeats||screen?.seats||[]).map((seat, index) => ({...seat, row: seat.row ?? Math.floor(index / (screen?.seatsPerRow||1)) + 1, column: seat.column ?? index % (screen?.seatsPerRow||1) + 1}));

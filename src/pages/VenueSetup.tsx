@@ -1,8 +1,8 @@
-import {useState, type ChangeEvent, type FormEvent} from 'react';
+import {useEffect, useState, type ChangeEvent, type FormEvent} from 'react';
 import {Link} from 'react-router-dom';
 import {Armchair, Building2, ChevronRight, ImagePlus, MapPinned, Plus, Save, Trash2, Video} from 'lucide-react';
 import {useApp} from '../context/AppContext';
-import {createScreen, database, repositories} from '../services/api';
+import {createScreen, database, loadTheatreScreens, repositories} from '../services/api';
 import {seatsFor} from '../data/seed';
 import {Empty, Notice, SectionHeading} from '../components/Common';
 import type {Theatre, VenueMedia} from '../types';
@@ -10,6 +10,7 @@ import type {Theatre, VenueMedia} from '../types';
 const createVenue=():Theatre=>({id:crypto.randomUUID(),name:'',address:'',city:'Hyderabad',state:'Telangana',contact:'',status:'ACTIVE',mapUrl:'',media:[]});
 export function VenueSetup(){
  const {data}=useApp(); const [venueId,setVenueId]=useState(data.theatres[0]?.id||''); const [venue,setVenue]=useState<Theatre>(()=>data.theatres[0]||createVenue()); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [mediaUrl,setMediaUrl]=useState(''); const [mediaTitle,setMediaTitle]=useState(''); const [mediaType,setMediaType]=useState<VenueMedia['type']>('IMAGE');
+ useEffect(()=>{if(data.theatres.length)void loadTheatreScreens(data.theatres.map(item=>item.id)).catch(reason=>setError((reason as Error).message));},[data.theatres]);
  const screens=data.screens.filter(item=>item.theatreId===venue.id);
  const choose=(id:string)=>{const selected=data.theatres.find(item=>item.id===id);if(selected){setVenueId(id);setVenue({...selected,media:selected.media||[],mapUrl:selected.mapUrl||''});setMessage('');setError('');}};
  const newVenue=()=>{setVenueId('new');setVenue(createVenue());setMessage('Complete and save the theatre details, then add screens.');};
