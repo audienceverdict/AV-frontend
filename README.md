@@ -136,7 +136,7 @@ Current hero: retain the specified headline and supporting copy, remove the spot
 
 Quality checks: source and route/API paths were inspected. This audit does not claim browser verification at the requested viewport sizes, console inspection, or build/test execution. Remaining data limitation: exact creation-time ordering needs a movie-added timestamp from the existing backend/data model; the frontend deliberately reuses returned order until that field exists.
 
-`src/services/auth.ts` implements the API adapter. `src/context/AppContext.tsx` restores authentication before protected pages render. Vite proxies `/api` to port 8080. Production hosting must route `/api` to the backend and provide SPA fallback for other paths.
+`src/services/auth.ts` implements the API adapter. `src/context/AppContext.tsx` restores authentication before protected pages render. Vite proxies `/api` to port 8080 during development. On the production server, route `/api` to the backend and configure the web server to serve `index.html` for frontend routes (SPA fallback).
 
 `npm test` and `npm run build` run validation.
 
