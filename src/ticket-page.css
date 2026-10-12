@@ -72,3 +72,53 @@
 @media(max-width:800px){.ticket-content{width:calc(100vw - 36px)}.ticket-showcase .digital-ticket{grid-template-columns:minmax(0,1fr) 220px}.ticket-showcase .ticket-main{grid-template-columns:110px minmax(0,1fr);gap:17px;padding:22px 18px}.ticket-film-poster{width:110px;height:166px}.ticket-showcase .ticket-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.ticket-showcase .ticket-facts>div:nth-child(2){border-right:0}.ticket-showcase .ticket-facts>div:nth-child(n+3){border-top:1px solid #ffffff16}.ticket-showcase .ticket-notifications{grid-template-columns:58px minmax(0,1fr) 34px;padding:17px}.ticket-mail-icon{width:54px;height:54px}.ticket-mail-copy{padding-left:16px}}
 @media(max-width:620px){.ticket-content{width:calc(100vw - 24px);margin-top:-22px}.ticket-showcase .digital-ticket{grid-template-columns:1fr}.ticket-showcase .ticket-main{grid-template-columns:88px minmax(0,1fr);gap:14px;padding:18px 15px}.ticket-film-poster{width:88px;height:132px}.ticket-showcase .ticket-facts{grid-column:1/-1}.ticket-showcase .ticket-stub{display:flex;align-items:center;text-align:center;border-left:0;border-top:1px dashed #ef766d;padding:18px}.ticket-showcase .ticket-stub:before,.ticket-showcase .ticket-stub:after{top:-12px;left:calc(50% - 12px);right:auto}.ticket-showcase .ticket-stub:after{top:auto;bottom:-12px}.ticket-showcase .ticket-notifications{grid-template-columns:44px minmax(0,1fr);gap:12px;padding:14px}.ticket-mail-icon{width:42px;height:42px}.ticket-mail-copy{padding-left:12px}.ticket-mail-copy h2{align-items:flex-start;flex-direction:column;gap:6px;font-size:14px}.ticket-mail-copy p{font-size:10px}.ticket-mail-copy small{font-size:9px}.ticket-send-art{display:none}}
 
+/* Booking confirmation layout */
+.ticket-showcase{min-height:calc(100vh - 72px);padding:0 0 48px;background:radial-gradient(ellipse at 50% 36%,#211719 0,transparent 52%),#090c0e;overflow:hidden}
+.ticket-hero{min-height:300px}
+.ticket-hero-copy{padding:28px 20px 48px}
+.ticket-content{width:min(1120px,calc(100% - 48px));margin:-30px auto 0;z-index:1}
+.ticket-showcase .digital-ticket{grid-template-columns:minmax(0,1fr) 300px;min-height:0;border-radius:14px}
+.ticket-showcase .ticket-main{grid-template-columns:150px minmax(0,1fr);align-items:start;gap:26px;padding:30px}
+.ticket-film-poster{width:150px;height:225px;flex:none}
+.ticket-film-poster img{display:block;width:100%;height:100%;object-fit:cover}
+.ticket-poster-fallback{display:grid;width:100%;height:100%;place-content:center;justify-items:center;gap:12px;padding:12px;box-sizing:border-box;color:#aeb3bb;text-align:center;background:linear-gradient(145deg,#25292f,#111416)}
+.ticket-poster-fallback span{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.ticket-main-details{min-width:0}
+.ticket-main-details h2{overflow-wrap:anywhere}
+.ticket-showcase .ticket-facts{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:20px}
+.ticket-showcase .ticket-facts>div{padding:13px 12px;border-right:1px solid #ffffff16;border-bottom:1px solid #ffffff16}
+.ticket-showcase .ticket-facts>div:first-child{padding-left:12px}
+.ticket-showcase .ticket-facts>div:nth-child(even){border-right:0}
+.ticket-showcase .ticket-facts>div:nth-child(n+3){border-bottom:0}
+.ticket-showcase .ticket-facts small{white-space:normal;font-size:9px}
+.ticket-showcase .ticket-facts strong{overflow-wrap:anywhere;word-break:normal;font-size:14px}
+.ticket-status-line{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;gap:10px 16px}
+.ticket-status-line>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+.ticket-status-line>span:nth-child(3){grid-column:2;overflow-wrap:anywhere}
+.ticket-showcase .ticket-stub{position:relative;justify-content:center;gap:14px;min-width:0;padding:32px 26px;border-left:1px dashed #ef766d;border-top:0;text-align:center}
+.ticket-showcase .ticket-stub:before,.ticket-showcase .ticket-stub:after{content:"";position:absolute;left:-12px;width:22px;height:22px;border:1px solid #ff6659;border-radius:50%;background:#111315}
+.ticket-showcase .ticket-stub:before{top:-12px}
+.ticket-showcase .ticket-stub:after{top:auto;bottom:-12px}
+.ticket-showcase .ticket-stub strong{font-size:clamp(13px,1.4vw,17px);line-height:1.5;overflow-wrap:anywhere}
+.ticket-showcase .ticket-stub small{font-size:11px;line-height:1.6;letter-spacing:0}
+.ticket-showcase .ticket-notifications{grid-template-columns:62px minmax(0,1fr) 42px;min-height:0;margin:16px 0 18px;padding:18px 22px}
+.ticket-showcase .ticket-notifications{width:100%;box-sizing:border-box;align-items:center;border-radius:12px}
+.ticket-mail-icon{width:54px;height:54px}
+.ticket-mail-copy{padding-left:20px}
+.ticket-email-status.unknown{border-color:#8b6635;background:#302414;color:#e9c478}
+.ticket-email-status.not-sent{border-color:#8b4545;background:#351b1c;color:#ffaaa3}
+.ticket-actions{justify-content:flex-end;gap:12px}
+.ticket-actions .button,.ticket-actions .button.secondary{min-width:180px;min-height:48px}
+.ticket-actions .text-link{min-height:48px}
+.ticket-showcase :is(a,button):focus-visible{outline:3px solid #ffb29f;outline-offset:3px}
+@media(max-width:900px){.ticket-content{width:min(760px,calc(100% - 40px))}.ticket-showcase .digital-ticket{grid-template-columns:minmax(0,1fr) 245px}.ticket-showcase .ticket-main{grid-template-columns:120px minmax(0,1fr);gap:18px;padding:24px}.ticket-film-poster{width:120px;height:180px}.ticket-showcase .ticket-facts strong{font-size:12px}.ticket-showcase .ticket-stub{padding:24px 18px}.ticket-reference-icon{width:92px;height:92px}.ticket-showcase .ticket-notifications{grid-template-columns:52px minmax(0,1fr) 30px;padding:16px}.ticket-mail-icon{width:48px;height:48px}.ticket-mail-copy{padding-left:15px}}
+@media(max-width:680px){.ticket-hero{min-height:260px}.ticket-content{width:calc(100% - 28px);margin-top:-22px}.ticket-showcase .digital-ticket{grid-template-columns:minmax(0,1fr)}.ticket-showcase .ticket-main{grid-template-columns:88px minmax(0,1fr);gap:14px;padding:18px}.ticket-film-poster{width:88px;height:132px}.ticket-main-details>.eyebrow{font-size:8px;letter-spacing:.9px}.ticket-main-details h2{font-size:23px}.ticket-movie-meta{font-size:10px}.ticket-venue{font-size:11px}.ticket-screen-name{font-size:10px;margin:6px 0 12px}.ticket-showcase .ticket-facts{grid-column:1/-1;margin-top:14px}.ticket-showcase .ticket-facts>div{padding:10px 8px}.ticket-showcase .ticket-facts>div:first-child{padding-left:8px}.ticket-showcase .ticket-facts small{font-size:8px}.ticket-showcase .ticket-facts strong{font-size:11px}.ticket-status-line{grid-column:1/-1;grid-template-columns:max-content minmax(0,1fr);margin-top:12px;font-size:10px}.ticket-status-line>span:nth-child(3){grid-column:2}.ticket-showcase .ticket-stub{display:grid;grid-template-columns:64px minmax(0,1fr);justify-items:start;gap:5px 13px;padding:18px;text-align:left;border-left:0;border-top:1px dashed #ef766d}.ticket-showcase .ticket-stub:before,.ticket-showcase .ticket-stub:after{top:-11px;left:calc(50% - 11px);right:auto;width:20px;height:20px}.ticket-showcase .ticket-stub:after{top:auto;bottom:-11px}.ticket-reference-icon{grid-row:span 3;width:60px;height:60px;margin:0}.ticket-reference-icon svg{width:30px}.ticket-showcase .ticket-stub .ticket-reference-label,.ticket-showcase .ticket-stub strong,.ticket-showcase .ticket-stub small{justify-self:start}.ticket-showcase .ticket-stub strong{font-size:13px}.ticket-showcase .ticket-stub small{font-size:10px}.ticket-showcase .ticket-notifications{grid-template-columns:42px minmax(0,1fr);gap:11px;padding:14px}.ticket-mail-icon{width:40px;height:40px}.ticket-mail-icon svg{width:21px}.ticket-mail-copy{padding-left:12px}.ticket-mail-copy h2{align-items:flex-start;flex-direction:column;gap:6px;font-size:14px}.ticket-mail-copy p{font-size:10px}.ticket-mail-copy small{font-size:9px}.ticket-send-art{display:none}.ticket-actions{justify-content:stretch;gap:8px}.ticket-actions .button,.ticket-actions .button.secondary{flex:1 1 145px;min-width:0;min-height:46px;padding:10px 12px;font-size:11px}.ticket-actions .text-link{flex:1 1 100%;justify-content:center;min-height:42px}}
+@media print{body{background:#fff!important;color:#111!important}.ticket-showcase{min-height:0;padding:0;background:#fff!important;color:#111!important}.ticket-hero,.ticket-actions,.site-header,footer{display:none!important}.ticket-content{width:100%;max-width:none;margin:0}.ticket-showcase .digital-ticket{grid-template-columns:minmax(0,1fr) 250px;break-inside:avoid;border:1px solid #555;background:#fff;box-shadow:none}.ticket-showcase .ticket-main{padding:20px}.ticket-showcase .ticket-main-details h2,.ticket-showcase .ticket-venue,.ticket-showcase .ticket-facts strong,.ticket-showcase .ticket-stub strong{color:#111}.ticket-showcase .ticket-main-details>.eyebrow,.ticket-showcase .ticket-movie-meta,.ticket-showcase .ticket-screen-name,.ticket-showcase .ticket-facts small,.ticket-showcase .ticket-stub small,.ticket-showcase .ticket-status-line{color:#333}.ticket-showcase .ticket-stub{border-color:#555}.ticket-showcase .ticket-stub:before,.ticket-showcase .ticket-stub:after{display:none}.ticket-showcase .ticket-notifications{break-inside:avoid;background:#fff;color:#111;border-color:#555}.ticket-mail-copy h2,.ticket-mail-copy p,.ticket-mail-copy small{color:#111!important}.ticket-mail-copy{border-color:#777}}
+
+/* Keep the email bar and actions on the ticket's exact outer width. */
+.ticket-content{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+.ticket-content>.digital-ticket,.ticket-content>.ticket-notifications,.ticket-content>.ticket-actions{width:100%;max-width:none;min-width:0;box-sizing:border-box;margin:0}
+.ticket-showcase .digital-ticket{align-self:stretch}
+.ticket-content>.ticket-actions{display:flex;justify-content:flex-end;align-items:center;gap:12px;flex-wrap:wrap}
+@media(max-width:680px){.ticket-content{gap:12px}.ticket-content>.ticket-actions{justify-content:stretch}.ticket-content>.ticket-actions .button,.ticket-content>.ticket-actions .text-link{flex:1 1 145px;min-width:0}.ticket-content>.ticket-actions .text-link{justify-content:center}}
+

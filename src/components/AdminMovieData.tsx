@@ -10,7 +10,8 @@ export function AdminMovieData({media,companies,locations,countries,onMediaChang
  const [mediaDraft,setMediaDraft]=useState<Row|null>(null),[mediaIndex,setMediaIndex]=useState<number|null>(null);
  const [companyDraft,setCompanyDraft]=useState<Row|null>(null),[companyIndex,setCompanyIndex]=useState<number|null>(null);
  const newMedia=()=>({mediaType:'IMAGE',title:'',description:'',mediaUrl:'',thumbnailUrl:'',language:'',isOfficial:false,isPrimary:false,displayOrder:media.length,sourcePlatform:'',publishedAt:'',embedUrl:''});
- const input=(label:string,value:unknown,onChange:(value:string)=>void,type='text')=><label>{label}<input type={type} value={value??''} onChange={event=>onChange(event.target.value)}/></label>;
+ const inputValue=(value:unknown):string=>typeof value==='string'||typeof value==='number'?String(value):Array.isArray(value)?value.map(item=>String(item)).join(', '):'';
+ const input=(label:string,value:unknown,onChange:(value:string)=>void,type='text')=><label>{label}<input type={type} value={inputValue(value)} onChange={event=>onChange(event.target.value)}/></label>;
  const mediaValue=media.map(item=>({...item}));const companyValue=companies.map(item=>({...item}));
  const saveMedia=()=>{if(!mediaDraft?.mediaUrl?.trim())return;const next=[...mediaValue];if(mediaIndex==null)next.push(mediaDraft);else next[mediaIndex]={...next[mediaIndex],...mediaDraft};onMediaChange(next);setMediaDraft(null);setMediaIndex(null);};
  const saveCompany=()=>{if(!companyDraft?.name?.trim())return;const next=[...companyValue];if(companyIndex==null)next.push(companyDraft);else next[companyIndex]={...next[companyIndex],...companyDraft};onCompaniesChange(next);setCompanyDraft(null);setCompanyIndex(null);};

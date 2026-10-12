@@ -1,6 +1,6 @@
 import type {User} from '../types';
 const TOKEN_KEY='av_access_token';
-const API_BASE_URL=(import.meta.env.VITE_API_BASE_URL||'http://192.168.29.140:8080/api/v1').replace(/\/$/,'');
+const API_BASE_URL=(import.meta.env.VITE_API_BASE_URL||'http://192.168.29.140:8080/api/v1').replace(/\/$/,'' );
 let currentUser:User|null=null;
 let generation=0;
 const notify=()=>window.dispatchEvent(new Event('av-auth-change'));

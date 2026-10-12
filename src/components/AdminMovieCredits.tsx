@@ -15,8 +15,9 @@ export function AdminMovieCredits({castCredits,crewByDepartment,onCastChange,onC
  const castSetter=(fn:(old:Credit)=>Credit)=>setCastDraft(old=>old?fn(old):old);
  const crewSetter=(fn:(old:Credit)=>Credit)=>setCrewDraft(old=>old?fn(old):old);
  const departments=crewByDepartment.map((value:any)=>({...value,departmentName:String(value.departmentName||value.name||value.department||'Crew'),department:String(value.department||value.departmentName||value.name||'CREW'),credits:Array.isArray(value.credits)?value.credits:[]}));
- const input=(label:string,value:unknown,onChange:(value:string)=>void,type='text',placeholder='')=><label>{label}<input type={type} value={value??''} placeholder={placeholder} onChange={event=>onChange(event.target.value)}/></label>;
- const textarea=(label:string,value:unknown,onChange:(value:string)=>void)=><label className="span-two">{label}<textarea rows={2} value={value??''} onChange={event=>onChange(event.target.value)}/></label>;
+ const inputValue=(value:unknown):string=>typeof value==='string'||typeof value==='number'?String(value):Array.isArray(value)?value.map(item=>String(item)).join(', '):'';
+ const input=(label:string,value:unknown,onChange:(value:string)=>void,type='text',placeholder='')=><label>{label}<input type={type} value={inputValue(value)} placeholder={placeholder} onChange={event=>onChange(event.target.value)}/></label>;
+ const textarea=(label:string,value:unknown,onChange:(value:string)=>void)=><label className="span-two">{label}<textarea rows={2} value={inputValue(value)} onChange={event=>onChange(event.target.value)}/></label>;
  const update=(setter:(fn:(old:Credit)=>Credit)=>void,key:string,value:unknown)=>setter(old=>({...old,[key]:value}));
  const updatePerson=(setter:(fn:(old:Credit)=>Credit)=>void,key:string,value:unknown)=>setter(old=>({...old,person:{...old.person,[key]:value}}));
  const updateSocial=(setter:(fn:(old:Credit)=>Credit)=>void,key:string,value:string)=>setter(old=>({...old,person:{...old.person,socialLinks:{...(old.person?.socialLinks||{}),[key]:value}}}));

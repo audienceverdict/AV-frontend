@@ -1,6 +1,6 @@
 ﻿// @vitest-environment jsdom
-import {beforeEach,describe,expect,it} from 'vitest';
-import {createBooking,database,emptyData,validateBooking,embedUrl,removeEntity,normalizeMovie,serializeMovie} from './api';
+import {beforeEach,describe,expect,it,vi} from 'vitest';
+import {createBooking,database,emptyData,validateBooking,embedUrl,removeEntity,normalizeMovie,serializeMovie,saveLayoutSeats} from './api';
 import type {Data} from '../types';
 const makeTestData=():Data=>{
  const data=emptyData();
@@ -30,4 +30,25 @@ describe('demo services',()=>{
  it('allows known embed hosts and rejects arbitrary URLs',()=>{expect(embedUrl('https://youtu.be/zSWdZVtXT7E')).toBe('https://www.youtube-nocookie.com/embed/zSWdZVtXT7E');expect(embedUrl('https://youtube.com.evil.test/watch?v=zSWdZVtXT7E')).toBeNull();expect(embedUrl('javascript:alert(1)')).toBeNull();});
  it('normalizes supported movie DTO aliases without inventing optional data',()=>{const movie=normalizeMovie({id:'m-1',title:'Example',genres:'Drama, Romance',externalTrailerUrl:'https://youtu.be/zSWdZVtXT7E',synopsis:'A real description',cast:['Actor A'],posterImages:['https://example.com/a.webp'],status:'ACTIVE'});expect(movie.genre).toEqual(['Drama','Romance']);expect(movie.trailerUrl).toBe('https://youtu.be/zSWdZVtXT7E');expect(movie.description).toBe('A real description');expect(movie.cast).toEqual(['Actor A']);expect(movie.posterImages).toEqual(['https://example.com/a.webp']);expect(movie.director).toBe('');expect(movie.status).toBe('ACTIVE');});
  it('serializes edited movies using the field names returned by the backend',()=>{const canonical=normalizeMovie({id:'m-1',title:'Example',genres:['Drama'],synopsis:'Original',externalTrailerUrl:'https://youtu.be/old'});const canonicalPayload=serializeMovie({...canonical,genre:['Romance'],description:'Updated',trailerUrl:'https://youtu.be/new'});expect(canonicalPayload.genres).toEqual(['Romance']);expect(canonicalPayload.synopsis).toBe('Updated');expect(canonicalPayload.externalTrailerUrl).toBe('https://youtu.be/new');expect(canonicalPayload).not.toHaveProperty('genre');expect(canonicalPayload).not.toHaveProperty('description');const legacy=normalizeMovie({id:'m-2',title:'Legacy',genre:['Drama'],description:'Legacy synopsis',trailerUrl:'https://youtu.be/legacy'});const legacyPayload=serializeMovie({...legacy,description:'Changed'});expect(legacyPayload.description).toBe('Changed');expect(legacyPayload).not.toHaveProperty('synopsis');});
+});
+describe('layout seat API payload',()=>{
+ it('sends only backend fields, preserving existing IDs and omitting IDs for new seats',async()=>{
+  const fetchMock=vi.spyOn(globalThis,'fetch').mockResolvedValue(new Response('[]',{status:200,headers:{'Content-Type':'application/json'}}));
+  const seats=[
+   {id:'A1',backendId:'backend-seat-7',editorId:'frontend-key-7',label:'A1',row:1,column:1,category:'PREMIUM',disabled:false,color:'#c19548',selected:true},
+   {id:'temporary-label',editorId:'frontend-key-new',label:'A2',row:1,column:2,category:'REGULAR',disabled:true,color:'#8b7a91',selected:false}
+  ];
+  await saveLayoutSeats('screen-1','version-1',seats);
+  const [,init]=fetchMock.mock.calls[0];
+  const payload=JSON.parse(String(init?.body));
+  expect(payload).toEqual([
+   {id:'backend-seat-7',label:'A1',rowNumber:1,columnNumber:1,category:'PREMIUM',disabled:false,color:'#c19548'},
+   {label:'A2',rowNumber:1,columnNumber:2,category:'REGULAR',disabled:true,color:'#8b7a91'}
+  ]);
+  expect(Array.isArray(payload)).toBe(true);
+  expect(JSON.stringify(payload)).not.toContain('editorId');
+  expect(seats[0].editorId).toBe('frontend-key-7');
+  expect(seats[1].editorId).toBe('frontend-key-new');
+  fetchMock.mockRestore();
+ });
 });
