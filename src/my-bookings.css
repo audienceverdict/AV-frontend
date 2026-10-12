@@ -1,0 +1,37 @@
+.my-bookings-page{min-height:calc(100vh - 145px);background:#090c0f;color:#f3f3f4;padding-bottom:32px}
+.my-bookings-hero{position:relative;min-height:174px;display:flex;align-items:center;overflow:hidden;background:#0b0d10 url('../images/bookings-hero.png') center 58%/cover no-repeat;border-bottom:1px solid #20252b}
+.my-bookings-hero:before{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,10,13,.94),rgba(8,10,13,.82) 34%,rgba(8,10,13,.12) 82%),linear-gradient(0deg,rgba(7,10,13,.28),transparent);content:''}
+.my-bookings-hero-content{position:relative;width:min(1215px,calc(100% - 64px));margin:0 auto;padding:20px 0}
+.my-bookings-hero-content>.eyebrow{color:#ff6559;font-size:10px;font-weight:800;letter-spacing:1.8px}
+.my-bookings-hero-content h1{margin:7px 0 5px;color:#fff;font:700 clamp(34px,4vw,48px)/1.08 Georgia,'Times New Roman',serif;letter-spacing:-1px}
+.my-bookings-hero-content p{margin:0;color:#c1c7ce;font-size:14px}
+.my-bookings-hero-content>a{position:absolute;right:0;bottom:27px;display:flex;align-items:center;gap:8px;color:#fff;font-size:12px;font-weight:700;text-decoration:none}.my-bookings-hero-content>a:hover{color:#ff8176}
+.my-bookings-content{width:min(1215px,calc(100% - 64px));margin:0 auto;padding-top:12px}
+.my-bookings-content .bookings-list{display:grid;gap:10px}
+.my-bookings-page .booking-row{display:grid;grid-template-columns:108px minmax(280px,1fr) 175px 280px;align-items:center;gap:17px;min-height:132px;margin:0;padding:11px 15px;border:1px solid #29313a;border-radius:12px;background:linear-gradient(105deg,#11161b,#0d1115);box-shadow:0 9px 26px #0002}
+.my-bookings-page .booking-poster{width:104px;height:108px;display:grid;place-items:center;overflow:hidden;border-radius:8px;background:#171b20;color:#f36a5e}
+.my-bookings-page .booking-poster img{display:block;width:100%;height:100%;object-fit:cover}
+.my-bookings-page .booking-row>div:nth-child(2){min-width:0}
+.my-bookings-page .booking-row>div:nth-child(2)>small{display:block;margin-bottom:5px;color:#aab3bf;font-size:10px;overflow-wrap:anywhere}
+.my-bookings-page .booking-row h3{margin:0 0 6px;color:#f8f7f6;font-size:18px;line-height:1.2}
+.my-bookings-page .booking-row p{margin:5px 0 0;color:#c1c8d0;font-size:11px;line-height:1.45}
+.my-bookings-page .booking-row>div:nth-child(2)>p:first-of-type{color:#aeb8c3}
+.my-bookings-page .booking-row-status{min-width:0;min-height:74px;justify-content:center;padding:0 13px;border-left:1px solid #293039}
+.my-bookings-page .booking-row-status .status{display:flex;align-items:center;gap:6px;border-radius:22px;padding:7px 11px;font-size:9px}
+.my-bookings-page .booking-row-status .status.confirmed{border-color:#248a55;background:#0b3927;color:#69e29b}
+.my-bookings-page .booking-row-status .status.pending{border-color:#a37616;background:#372908;color:#ffd157}
+.my-bookings-page .booking-row-status .status.cancelled{border-color:#90403e;background:#3a191a;color:#ff9e97}
+.my-bookings-page .booking-row-status>p{margin:9px 0 2px;color:#f4f4f5;font-size:16px;font-weight:800}
+.my-bookings-page .booking-row-status>small{color:#aeb5bf;font-size:10px;line-height:1.45}
+.my-bookings-page .booking-row-actions{min-width:0;padding-left:15px;border-left:1px solid #293039;flex-wrap:nowrap}
+.my-bookings-page .booking-row-actions>.button{min-height:40px;padding:9px 11px;border-radius:7px;font-size:10px;white-space:nowrap}
+.my-bookings-page .booking-row-actions>.button.secondary{border-color:#4b5662;background:#11161b}
+.my-bookings-page .booking-row-actions>.ticket-action{border-color:#ff6b5f;background:linear-gradient(130deg,#ff6c5e,#ec4d44);box-shadow:0 6px 18px #e94b4028}
+.my-bookings-page .booking-row-waitlist{border-color:#d48625;background:linear-gradient(105deg,#211815,#181516 60%,#131315)}
+.my-bookings-page .booking-row-waitlist .booking-row-status{padding-left:22px}
+.my-bookings-page .booking-row-waitlist .status.waiting,.my-bookings-page .booking-row-waitlist .status.offered{border-color:#b38010;background:#332605;color:#ffd04c}
+.my-bookings-page .booking-row-waitlist .ticket-action{justify-self:center;min-height:42px;min-width:190px;border:1px solid #c24d3f;border-radius:7px;background:linear-gradient(120deg,#58251f,#381b19);color:#fff;font-size:10px}
+.my-bookings-page .empty{margin:20px auto;background:#101418}
+.my-bookings-page .notice{margin:0 0 10px}
+@media(max-width:1050px){.my-bookings-page .booking-row{grid-template-columns:88px minmax(220px,1fr) 145px;gap:13px}.my-bookings-page .booking-poster{width:84px;height:98px}.my-bookings-page .booking-row-actions,.my-bookings-page .booking-row-waitlist>.ticket-action{grid-column:2/4;justify-self:start;padding-left:0;border-left:0}.my-bookings-page .booking-row-waitlist>.ticket-action{justify-self:start;min-width:0;padding:10px 14px}.my-bookings-page .booking-row-status{grid-column:3;grid-row:1/2}.my-bookings-page .booking-row-actions{grid-row:2;display:flex}.my-bookings-page .booking-row-waitlist>.ticket-action{grid-row:2}}
+@media(max-width:650px){.my-bookings-hero{min-height:166px;background-position:64% center}.my-bookings-hero-content,.my-bookings-content{width:calc(100% - 30px)}.my-bookings-hero-content h1{font-size:36px}.my-bookings-hero-content p{font-size:12px}.my-bookings-hero-content>a{right:0;bottom:18px;font-size:10px}.my-bookings-page .booking-row{grid-template-columns:70px minmax(0,1fr);gap:10px 12px;padding:11px;min-height:0}.my-bookings-page .booking-poster{grid-column:1;grid-row:1/3;width:70px;height:87px}.my-bookings-page .booking-row>div:nth-child(2){grid-column:2;grid-row:1}.my-bookings-page .booking-row h3{font-size:15px}.my-bookings-page .booking-row>div:nth-child(2)>small{font-size:8px}.my-bookings-page .booking-row p{font-size:9px}.my-bookings-page .booking-row-status{grid-column:2;grid-row:2;min-height:0;padding:7px 0 0;border-left:0;border-top:1px solid #283039;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 10px}.my-bookings-page .booking-row-status .status{grid-row:1/3;justify-self:start}.my-bookings-page .booking-row-status>p{margin:0;font-size:13px}.my-bookings-page .booking-row-status>small{font-size:8px}.my-bookings-page .booking-row-actions,.my-bookings-page .booking-row-waitlist>.ticket-action{grid-column:1/-1;grid-row:3;width:100%;padding:8px 0 0;border-left:0;border-top:1px solid #283039;display:grid;grid-template-columns:1fr 1.15fr;gap:8px}.my-bookings-page .booking-row-actions>.button{width:100%;min-height:38px;font-size:9px}.my-bookings-page .booking-row-waitlist>.ticket-action{display:flex;justify-content:center;min-width:0;margin-top:0}.my-bookings-page .booking-row-waitlist .booking-row-status{grid-row:2}.my-bookings-page .booking-row-waitlist>.ticket-action{grid-row:3}}

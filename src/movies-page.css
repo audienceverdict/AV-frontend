@@ -1,0 +1,136 @@
+.movies-page {
+  --movies-accent: #ff4d48;
+  min-height: 75vh;
+  color: #f6f6f7;
+  background: radial-gradient(ellipse at 50% 55%, #0a1118 0%, #070c11 68%, #06090e 100%);
+}
+.site-header:has(+ main .movies-page) { height: 60px; }
+.site-header:has(+ main .movies-page) .nav-wrap { width: min(1320px,calc(100% - 64px)); }
+.site-header:has(+ main .movies-page) nav a.active::after { bottom: 0; height: 2px; }
+.site-header:has(+ main .movies-page) .monogram { font-size: 34px; }
+.site-header:has(+ main .movies-page) .logo>span:last-child { font-size: 9px; }
+.site-header:has(+ main .movies-page) .button.small { padding: 8px 15px; }
+.movies-hero {
+  position: relative;
+  height: 330px;
+  background-color: #05090e;
+  background-position: center 48%;
+  background-size: cover;
+}
+.movies-hero-inner {
+  width: min(1320px, calc(100% - 80px));
+  margin: auto;
+  padding-top: 54px;
+}
+.movies-hero .eyebrow { margin-bottom: 10px; color: #ff514d; }
+.movies-hero h1 { font-size: clamp(36px, 4vw, 54px); line-height: 1.1; letter-spacing: -2px; }
+.movies-hero h1 span { color: var(--movies-accent); }
+.movies-hero p { margin-top: 10px; color: #e0e2e6; font-size: 15px; }
+.movies-content {
+  position: relative;
+  z-index: 2;
+  margin-top: -54px;
+  padding-bottom: 30px;
+}
+.movies-filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) repeat(4, minmax(120px, .95fr)) auto;
+  gap: 10px;
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #62697580;
+  border-radius: 10px;
+  background: #0c1118e8;
+  box-shadow: 0 14px 38px #0005;
+  backdrop-filter: blur(18px);
+}
+.movies-filters .search-box,
+.movies-filters select {
+  height: 46px;
+  min-width: 0;
+  border: 1px solid #626975a0;
+  border-radius: 7px;
+  color: #f4f5f6;
+  background: #080d13;
+}
+.movies-filters .search-box { gap: 9px; padding: 0 13px; }
+.movies-filters .search-box input { width: 100%; min-width: 0; color: #f4f5f6; font-size: 12px; }
+.movies-filters .search-box input::placeholder { color: #afb4bd; }
+.movies-filters select { padding: 0 12px; font-size: 11px; }
+.movies-search-button,.movies-clear-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 17px;
+  border: 1px solid var(--movies-accent);
+  border-radius: 7px;
+  color: #fff;
+  background: var(--movies-accent);
+  box-shadow: 0 6px 18px #ff433d40;
+  font-size: 11px;
+  font-weight: 800;
+}
+.movies-search-button:hover,.movies-clear-button:hover { background: #ff6862; }
+.movies-page .result-count { margin: 18px 0 22px; color: #d3d7dd; font-size: 12px; }
+.movies-page .empty {
+  display: flex;
+  min-height: 285px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: none;
+  margin: 0;
+  padding: 30px 20px;
+  border: 1px dashed #647080a0;
+  border-radius: 11px;
+  background: #07101775;
+}
+.movies-page .empty > svg { width: 82px; height: 82px; margin: 0 0 16px; padding: 17px; border-radius: 50%; color: #ff625d; background: radial-gradient(circle, #ff514c32, #ff514c08 70%); filter: drop-shadow(0 7px 16px #ff453d44); }
+.movies-page .empty h3 { margin: 0; color: #f6f6f7; font-size: 19px; }
+.movies-empty-hint { margin-top: 5px; color: #b8bdc6; font-size: 13px; }
+.movies-clear-button { min-height: 42px; margin-top: 14px; padding-inline: 20px; }
+.movies-benefits {
+  border-top: 1px solid #ff5a4f22;
+  border-bottom: 1px solid #ff5a4f22;
+  background: radial-gradient(ellipse at 8% 45%, #67141b70, transparent 36%),radial-gradient(ellipse at 96% 55%, #a51b202e, transparent 30%),linear-gradient(100deg,#181014,#110d10 55%,#210c10);
+}
+.movies-benefits-inner {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr 1px 1fr;
+  align-items: center;
+  gap: clamp(24px,5vw,72px);
+  width: min(1000px,calc(100% - 64px));
+  min-height: 126px;
+  margin: auto;
+}
+.movies-benefits-inner article { display: flex; align-items: center; gap: 16px; }
+.movies-benefits-inner article > span { display: grid; width: 54px; height: 54px; flex: 0 0 54px; place-items: center; border-radius: 14px; color: #ff625b; background: #ff4d482b; }
+.movies-benefits-inner h2 { font-size: 14px; letter-spacing: -.2px; }
+.movies-benefits-inner p { margin-top: 3px; color: #b7b5bd; font-size: 11px; line-height: 1.5; }
+.movies-benefits-inner > i { width: 1px; height: 38px; background: #ffffff2b; }
+@media (max-width: 1000px) {
+  .movies-filters { grid-template-columns: minmax(180px,2fr) repeat(2,minmax(120px,1fr)); }
+  .movies-search-button { min-height: 42px; }
+  .movies-benefits-inner { gap: 22px; }
+}
+@media (max-width: 620px) {
+  .movies-hero { height: 300px; background-position: 60% center; }
+  .movies-hero-inner { width: calc(100% - 40px); padding-top: 42px; }
+  .movies-hero h1 { max-width: 360px; font-size: 40px; }
+  .movies-hero p { max-width: 340px; font-size: 13px; }
+  .movies-content { width: calc(100% - 32px); margin-top: -38px; padding-bottom: 25px; }
+  .movies-filters { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; padding: 9px; }
+  .movies-filters .search-box { grid-column: 1/-1; }
+  .movies-filters select { width: 100%; min-width: 0; }
+  .movies-search-button { grid-column: 1/-1; }
+  .movies-page .empty { min-height: 265px; }
+  .movies-benefits-inner { grid-template-columns: 1fr; gap: 0; width: calc(100% - 40px); padding: 10px 0; }
+  .movies-benefits-inner article { min-height: 80px; }
+  .movies-benefits-inner > i { width: 100%; height: 1px; }
+}
+/* Movie catalogue and connected admin catalog controls */
+.home-catalog-search{display:flex;gap:10px;align-items:center;margin-top:26px;max-width:620px}.home-catalog-search label,.admin-movie-filters .search-box{display:flex;align-items:center;gap:10px;min-width:0}.home-catalog-search label{flex:1;padding:0 14px;border:1px solid #ffffff30;border-radius:10px;background:#080d12b5;min-height:48px;color:#9da9b7}.home-catalog-search input{width:100%;border:0;background:transparent;color:#f8f6f5;outline:0}.home-catalog-search input::placeholder{color:#a9b1bd}.home-catalog-search .button{white-space:nowrap}.admin-movie-filters{display:grid;grid-template-columns:minmax(230px,2fr) repeat(4,minmax(135px,1fr));gap:10px;margin:18px 0 8px;align-items:end}.admin-movie-filters>label{display:grid;gap:5px;color:#aeb5c1;font-size:12px}.admin-movie-filters input,.admin-movie-filters select{width:100%;min-width:0;min-height:42px;border:1px solid #343943;border-radius:8px;background:#101216;color:#f7f5f4;padding:9px 11px}.admin-movie-filters .search-box{min-height:42px;border:1px solid #343943;border-radius:8px;background:#101216;color:#aeb5c1;padding:0 11px}.admin-movie-filters .search-box input{min-width:0;border:0;background:transparent;color:#f7f5f4;outline:0}.admin-catalog-count{margin:8px 0 15px;font-size:13px}.catalog-health-count{display:block;margin:18px 0;color:#ff6257;font-size:30px}.catalog-health-count span{display:block;color:#b8bdc7;font-size:13px;font-weight:400}.catalog-load-error{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:14px 0;padding:14px 16px;border:1px solid #8f514d;border-radius:10px;background:#2b1719;color:#f1d8d5}.catalog-loading{padding:26px 0}.catalog-pagination{display:flex;justify-content:center;align-items:center;gap:18px;margin:24px 0;color:#c3c6ce}.catalog-pagination button:disabled{opacity:.45;cursor:not-allowed}.movie-profile-original-title{margin:-7px 0 4px;color:#aab2c0;font-size:14px}.movie-profile-tagline{margin:5px 0 10px;color:#d9cbbd;font-style:italic}.poster-upload-preview img{width:100%;max-width:155px;aspect-ratio:2/3;object-fit:cover;border:1px solid #373943;border-radius:8px}.admin-movie-filters select:focus-visible,.admin-movie-filters input:focus-visible,.home-catalog-search input:focus-visible,.catalog-pagination button:focus-visible{outline:2px solid #ff6257;outline-offset:2px}
+@media(max-width:1050px){.admin-movie-filters{grid-template-columns:repeat(3,minmax(140px,1fr))}.admin-movie-filters .search-box{grid-column:span 2}}
+@media(max-width:680px){.home-catalog-search{align-items:stretch;flex-direction:column}.home-catalog-search label{min-height:46px}.home-catalog-search .button{justify-content:center}.admin-movie-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-movie-filters .search-box{grid-column:1/-1}.catalog-load-error{align-items:flex-start;flex-direction:column}.catalog-pagination{gap:10px}.catalog-pagination .button{padding:9px 12px}}

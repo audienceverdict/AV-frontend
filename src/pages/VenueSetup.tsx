@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import {Armchair, Building2, ChevronRight, ImagePlus, MapPinned, Plus, Save, Trash2, Video} from 'lucide-react';
 import {useApp} from '../context/AppContext';
 import {createScreen, database, loadTheatreScreens, repositories} from '../services/api';
-import {seatsFor} from '../data/seed';
+import {seatsFor} from '../data/seats';
 import {Empty, Notice, SectionHeading} from '../components/Common';
 import type {Theatre, VenueMedia} from '../types';
 
