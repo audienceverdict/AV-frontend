@@ -1,6 +1,6 @@
 import type {User} from '../types';
+import {API_BASE_URL} from './config';
 const TOKEN_KEY='av_access_token';
-const API_BASE_URL=(import.meta.env.VITE_API_BASE_URL||'https://api.audienceverdict.in/api/v1').replace(/\/$/,'' );
 let currentUser:User|null=null;
 let generation=0;
 const notify=()=>window.dispatchEvent(new Event('av-auth-change'));

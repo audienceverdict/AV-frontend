@@ -1,8 +1,8 @@
 import type { Data, Booking, User } from '../types';
 import {normalizeSeatLayout} from '../utils/seatLayout';
 import {authService} from './auth';
+import {API_BASE_URL} from './config';
 const KEY='av_data_v2';
-const API_BASE_URL=(import.meta.env.VITE_API_BASE_URL||'https://api.audienceverdict.in/api/v1').replace(/\/$/,'' );
 const memoryStore=new Map<string,unknown>();
 export const storageService={
  read<T>(key:string,fallback:T):T {return (memoryStore.get(key) as T|undefined)??fallback;},

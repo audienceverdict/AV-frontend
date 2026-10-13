@@ -48,7 +48,7 @@ frontend/
         └── brandImages.ts      brand image URLs
 ```
 
-Framework: React 19 + TypeScript. Build/dev tool: Vite 6. Routing: React Router 7. Icons: lucide-react. Styling is hand-written CSS (no Tailwind/SCSS); fonts are DM Sans and Manrope via Google Fonts. Dark charcoal palette, coral accent, rounded cards, gradients, transitions, and reduced-motion rules. API requests use `VITE_API_BASE_URL` (see `.env.example`); Vite's local `/api` proxy forwards to that API host, defaulting to the production backend URL. Set the variable before building to override the default. Posters/backdrops and some brand images are remote URLs; video/PDF references are in `videos and photos/`. No dedicated hooks directory or reusable carousel exists.
+Framework: React 19 + TypeScript. Build/dev tool: Vite 6. Routing: React Router 7. Icons: lucide-react. Styling is hand-written CSS (no Tailwind/SCSS); fonts are DM Sans and Manrope via Google Fonts. Dark charcoal palette, coral accent, rounded cards, gradients, transitions, and reduced-motion rules. API requests use the shared `VITE_API_BASE_URL` setting (see `.env.example` and `.env.production`); machine-specific `.env.local` overrides are ignored by Git. Vite embeds these values at build time. Posters/backdrops and some brand images are remote URLs; video/PDF references are in `videos and photos/`. No dedicated hooks directory or reusable carousel exists.
 
 ### Routes and page behavior
 
