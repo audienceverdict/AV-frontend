@@ -6,10 +6,10 @@ import {Empty, Notice, SectionHeading} from '../components/Common';
 import type {Seat} from '../types';
 
 const position=(seat:Seat,index:number,columns:number)=>({row:seat.row??Math.floor(index/columns)+1,column:seat.column??index%columns+1});
-const rowName=(row:number)=>String.fromCharCode(64+row);
+const rowName=(row:number)=>{let label='';for(let value=row;value>0;value=Math.floor((value-1)/26))label=String.fromCharCode(65+(value-1)%26)+label;return label;};
 const editorKey=(seat:Seat)=>String((seat as Seat&{editorId?:string}).editorId||seat.id);
 const ensureEditorIds=(seats:Seat[])=>seats.map(seat=>({...seat,backendId:(seat as Seat&{backendId?:string}).backendId||seat.id,editorId:editorKey(seat)} as Seat&{backendId:string;editorId:string}));
-const displaySeats=(seats:Seat[])=>{const counters=new Map<number,number>();return [...seats].sort((a,b)=>(a.row||1)-(b.row||1)||(a.column||1)-(b.column||1)).map(seat=>{const row=seat.row||1;const number=(counters.get(row)||0)+1;counters.set(row,number);return {...seat,label:`${rowName(row)}${number}`};});};
+const displaySeats=(seats:Seat[])=>{const counters=new Map<number,number>();const ordered=[...seats].sort((a,b)=>(a.row||1)-(b.row||1)||(a.column||1)-(b.column||1));const rowNames=new Map([...new Set(ordered.map(seat=>seat.row||1))].map((row,index)=>[row,index+1]));return ordered.map(seat=>{const row=seat.row||1;const number=(counters.get(row)||0)+1;counters.set(row,number);return {...seat,label:`${rowName(rowNames.get(row)||row)}${number}`};});};
 export function LayoutBuilder({initialScreenId}:{initialScreenId?:string}={}){
   const {data}=useApp();
   const [screenId,setScreenId]=useState(initialScreenId||data.screens[0]?.id||'');

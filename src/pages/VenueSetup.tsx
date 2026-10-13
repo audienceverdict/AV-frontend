@@ -1,23 +1,110 @@
-import {useEffect, useState, type ChangeEvent, type FormEvent} from 'react';
+import {useEffect, useState, type FormEvent} from 'react';
 import {Link} from 'react-router-dom';
-import {Armchair, Building2, ChevronRight, ImagePlus, MapPinned, Plus, Save, Trash2, Video} from 'lucide-react';
+import {Armchair, Building2, ChevronRight, Eye, MapPinned, Pencil, Plus, Save, Trash2} from 'lucide-react';
 import {useApp} from '../context/AppContext';
 import {createScreen, database, loadTheatreScreens, repositories} from '../services/api';
-import {Empty, Notice, SectionHeading} from '../components/Common';
-import type {Theatre, VenueMedia} from '../types';
+import {Empty, Modal, Notice, SectionHeading} from '../components/Common';
+import type {Screen,Theatre} from '../types';
+import './venue-list.css';
 
 const createVenue=():Theatre=>({id:crypto.randomUUID(),name:'',address:'',city:'Hyderabad',state:'Telangana',contact:'',status:'ACTIVE',mapUrl:'',media:[]});
+
 export function VenueSetup(){
- const {data}=useApp(); const [venueId,setVenueId]=useState(data.theatres[0]?.id||''); const [venue,setVenue]=useState<Theatre>(()=>data.theatres[0]||createVenue()); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [mediaUrl,setMediaUrl]=useState(''); const [mediaTitle,setMediaTitle]=useState(''); const [mediaType,setMediaType]=useState<VenueMedia['type']>('IMAGE');
- useEffect(()=>{if(data.theatres.length)void loadTheatreScreens(data.theatres.map(item=>item.id)).catch(reason=>setError((reason as Error).message));},[data.theatres]);
- const screens=data.screens.filter(item=>item.theatreId===venue.id);
- const choose=(id:string)=>{const selected=data.theatres.find(item=>item.id===id);if(selected){setVenueId(id);setVenue({...selected,media:selected.media||[],mapUrl:selected.mapUrl||''});setMessage('');setError('');}};
- const newVenue=()=>{setVenueId('new');setVenue(createVenue());setMessage('Complete and save the theatre details, then add screens.');};
- const save=async(event?:FormEvent)=>{event?.preventDefault();try{if(!venue.name.trim()||!venue.address.trim()||!venue.city.trim())throw new Error('Enter the theatre name, full address, and city.');await repositories.theatres.save(venue);setVenueId(venue.id);setMessage('Theatre saved. You can now add screens.');setError('');}catch(reason){setError((reason as Error).message);}};
- const addMedia=(item:VenueMedia)=>{setVenue(current=>({...current,media:[...(current.media||[]),item]}));setMediaUrl('');setMediaTitle('');};
- const addMediaUrl=()=>{if(!mediaUrl.trim()){setError('Enter an image or video link first.');return;}addMedia({id:crypto.randomUUID(),type:mediaType,url:mediaUrl.trim(),title:mediaTitle.trim()||`${mediaType==='IMAGE'?'Theatre image':'Theatre video'} ${(venue.media?.length||0)+1}`});setError('');};
- const uploadMedia=(event:ChangeEvent<HTMLInputElement>)=>{const file=event.target.files?.[0];event.target.value='';if(!file)return;if(file.size>1500000){setError('Use a file smaller than 1.5 MB for this browser demo, or add a hosted media link.');return;}const reader=new FileReader();reader.onload=()=>{addMedia({id:crypto.randomUUID(),type:file.type.startsWith('video/')?'VIDEO':'IMAGE',url:String(reader.result),title:file.name});setError('');};reader.readAsDataURL(file);};
- const removeMedia=(id:string)=>setVenue(current=>({...current,media:(current.media||[]).filter(item=>item.id!==id)}));
- const addScreen=async()=>{try{const savedVenue=data.theatres.find(item=>item.id===venue.id)||data.theatres.find(item=>item.name.trim().toLowerCase()===venue.name.trim().toLowerCase()&&item.city===venue.city);const theatreId=savedVenue?.id||venue.id;if(!theatreId||!venue.name.trim())throw new Error('Enter and save the theatre details first.');const number=screens.length+1;const screen={id:crypto.randomUUID(),theatreId,name:`Screen ${number}`,number,rows:6,seatsPerRow:10,seats:[],status:'ACTIVE' as const};const saved=await createScreen(theatreId,screen);database.update(data=>{data.screens=[...data.screens.filter(item=>item.id!==saved.id),{...saved,seats:[]}];});setMessage(`${screen.name} added with a blank 6-row layout. Add seats in the screen workspace and save it for booking.`);setError('');}catch(reason){setError((reason as Error).message);}};
- return <div className="admin-content venue-setup"><SectionHeading eyebrow="VENUE SETUP" title="Create a theatre, then open each screen as its own workspace." description="Create theatres, then add screens and configure each seat layout."/><div className="venue-progress"><span className="active">1. Theatre details</span><i/><span className={screens.length?'active':''}>2. Add screens</span><i/><span>3. Open a screen workspace</span></div><section className="panel venue-form"><div className="venue-header"><div><Building2/><div><h3>Theatre details</h3><p className="muted">Location, contact, map, media and operating status.</p></div></div><div className="venue-switch"><select value={venueId} onChange={event=>choose(event.target.value)}>{data.theatres.map(item=><option value={item.id} key={item.id}>{item.name} · {item.city}</option>)}</select><button type="button" className="button secondary small" onClick={newVenue}><Plus size={15}/> New theatre</button></div></div><form onSubmit={save}><div className="form-grid"><label>Theatre name<input value={venue.name} onChange={event=>setVenue({...venue,name:event.target.value})} required/></label><label>Contact number<input value={venue.contact} onChange={event=>setVenue({...venue,contact:event.target.value})}/></label><label className="span-two">Full address<input value={venue.address} onChange={event=>setVenue({...venue,address:event.target.value})} required/></label><label>City<input value={venue.city} onChange={event=>setVenue({...venue,city:event.target.value})} required/></label><label>State<input value={venue.state} onChange={event=>setVenue({...venue,state:event.target.value})}/></label><label className="span-two">Google Maps link<input type="url" placeholder="https://maps.google.com/..." value={venue.mapUrl||''} onChange={event=>setVenue({...venue,mapUrl:event.target.value})}/></label><label>Status<select value={venue.status} onChange={event=>setVenue({...venue,status:event.target.value as Theatre['status']})}><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></label></div><div className="venue-save-row"><button className="button"><Save size={16}/> Save theatre</button>{venue.mapUrl&&<a className="button secondary" href={venue.mapUrl} target="_blank" rel="noreferrer"><MapPinned size={16}/> Open map</a>}</div></form></section>{message&&<Notice>{message}</Notice>}{error&&<Notice error>{error}</Notice>}<section className="panel screen-list"><div className="screen-list-heading"><div><h3>Screens in {venue.name||'this theatre'}</h3><p className="muted">Click a screen to open its own full workspace.</p></div><button className="button" onClick={addScreen}><Plus size={16}/> Add screen</button></div>{!screens.length?<Empty title="No screens have been added yet."><button className="button" onClick={addScreen}>Add first screen</button></Empty>:<div className="screen-cards">{screens.map(screen=><Link className="screen-card" key={screen.id} to={`/admin/venues/${venue.id}/screens/${screen.id}`}><Armchair/><div><strong>{screen.name}</strong><small>Screen {screen.number} · {screen.seats.length} seats · {screen.status}</small></div><ChevronRight size={18}/></Link>)}</div>}</section></div>;
+ const {data}=useApp();
+ const [editing,setEditing]=useState<Theatre|null>(null);
+ const [viewing,setViewing]=useState<Theatre|null>(null);
+ const [deleting,setDeleting]=useState<Theatre|null>(null);
+ const [viewingScreen,setViewingScreen]=useState<Screen|null>(null);
+ const [editingScreen,setEditingScreen]=useState<Screen|null>(null);
+ const [deletingScreen,setDeletingScreen]=useState<Screen|null>(null);
+ const [error,setError]=useState('');
+ const [message,setMessage]=useState('');
+ const [saving,setSaving]=useState(false);
+
+ useEffect(()=>{
+  if(data.theatres.length)void loadTheatreScreens(data.theatres.map(item=>item.id)).catch(reason=>setError((reason as Error).message));
+ },[data.theatres]);
+
+ const save=async(event:FormEvent)=>{
+  event.preventDefault();
+  if(!editing||saving)return;
+  setSaving(true);setError('');setMessage('');
+  try{
+   if(!editing.name.trim()||!editing.address.trim()||!editing.city.trim())throw new Error('Enter the theatre name, full address, and city.');
+   await repositories.theatres.save({...editing,name:editing.name.trim(),address:editing.address.trim(),city:editing.city.trim()});
+   setEditing(null);setMessage('Theatre saved successfully.');
+  }catch(reason){setError((reason as Error).message);}finally{setSaving(false);}
+ };
+
+ const remove=async()=>{
+  if(!deleting)return;
+  try{await repositories.theatres.delete(deleting.id);setDeleting(null);setViewing(null);setMessage(`${deleting.name} was deleted.`);setError('');}
+  catch(reason){setError((reason as Error).message);setDeleting(null);}
+ };
+
+ const saveScreen=async(event:FormEvent)=>{
+  event.preventDefault();if(!editingScreen)return;
+  try{if(!editingScreen.name.trim()||editingScreen.number<1||!Number.isInteger(editingScreen.number))throw new Error('Enter a screen name and a positive whole screen number.');await repositories.screens.save({...editingScreen,name:editingScreen.name.trim()});setEditingScreen(null);setMessage('Screen details saved.');setError('');}
+  catch(reason){setError((reason as Error).message);}
+ };
+
+ const removeScreen=async()=>{
+  if(!deletingScreen)return;
+  try{await repositories.screens.delete(deletingScreen.id);setDeletingScreen(null);setViewingScreen(null);setMessage(`${deletingScreen.name} was deleted.`);setError('');}
+  catch(reason){setError((reason as Error).message);setDeletingScreen(null);}
+ };
+
+ const addScreen=async(theatre:Theatre)=>{
+  try{
+   const number=data.screens.filter(item=>item.theatreId===theatre.id).length+1;
+   const screen={id:crypto.randomUUID(),theatreId:theatre.id,name:`Screen ${number}`,number,rows:6,seatsPerRow:10,seats:[],status:'ACTIVE' as const};
+   const saved=await createScreen(theatre.id,screen);
+   database.update(current=>{current.screens=[...current.screens.filter(item=>item.id!==saved.id),{...saved,seats:[]}]});
+   setViewing({...theatre});setMessage(`${screen.name} added. Configure its seating layout in the screen workspace.`);setError('');
+  }catch(reason){setError((reason as Error).message);}
+ };
+
+ const startEdit=(theatre?:Theatre)=>{setViewing(null);setEditing(theatre?{...theatre}:createVenue());setError('');setMessage('');};
+
+ return <div className="admin-content venue-setup">
+  <div className="venue-list-heading"><SectionHeading eyebrow="VENUE MANAGEMENT" title="Venues" description="Review your theatres, open their details, and manage screens."/><button className="button" type="button" onClick={()=>startEdit()}><Plus size={17}/> Add venue</button></div>
+  {message&&<Notice>{message}</Notice>}{error&&<Notice error>{error}</Notice>}
+  {data.theatres.length?<div className="venue-cards">{data.theatres.map(theatre=>{
+   const screens=data.screens.filter(screen=>screen.theatreId===theatre.id);
+   return <article className="venue-card" key={theatre.id}>
+    <div className="venue-card-icon"><Building2 size={22}/></div>
+    <div className="venue-card-content"><div className="venue-card-title"><h3>{theatre.name}</h3><span className={`status ${theatre.status.toLowerCase()}`}>{theatre.status}</span></div>
+     <p>{theatre.address}</p><div className="venue-card-meta"><span>{theatre.city}{theatre.state?`, ${theatre.state}`:''}</span><span>{screens.length} {screens.length===1?'screen':'screens'}</span>{theatre.contact&&<span>{theatre.contact}</span>}</div>
+    </div>
+    <div className="venue-card-actions"><button type="button" className="button secondary small" onClick={()=>{setViewing(theatre);setError('');}}><Eye size={15}/> View</button><button type="button" className="button secondary small" onClick={()=>startEdit(theatre)}><Pencil size={15}/> Edit</button><button type="button" className="button secondary small venue-delete-button" onClick={()=>setDeleting(theatre)}><Trash2 size={15}/> Delete</button></div>
+   </article>;
+  })}</div>:<section className="panel"><Empty title="No venues have been added yet."><button className="button" type="button" onClick={()=>startEdit()}><Plus size={16}/> Add your first venue</button></Empty></section>}
+
+  {editing&&<Modal title={data.theatres.some(item=>item.id===editing.id)?'Edit venue':'Add venue'} onClose={()=>!saving&&setEditing(null)}>
+   <form className="entity-form venue-edit-form" onSubmit={save}><div className="form-grid">
+    <label>Venue name<input value={editing.name} onChange={event=>setEditing({...editing,name:event.target.value})} required/></label>
+    <label>Contact number<input value={editing.contact} onChange={event=>setEditing({...editing,contact:event.target.value})}/></label>
+    <label className="span-two">Full address<input value={editing.address} onChange={event=>setEditing({...editing,address:event.target.value})} required/></label>
+    <label>City<input value={editing.city} onChange={event=>setEditing({...editing,city:event.target.value})} required/></label>
+    <label>State<input value={editing.state} onChange={event=>setEditing({...editing,state:event.target.value})}/></label>
+    <label className="span-two">Google Maps link<input type="url" placeholder="https://maps.google.com/..." value={editing.mapUrl||''} onChange={event=>setEditing({...editing,mapUrl:event.target.value})}/></label>
+    <label>Status<select value={editing.status} onChange={event=>setEditing({...editing,status:event.target.value as Theatre['status']})}><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></label>
+   </div><div className="button-row"><button className="button" disabled={saving}><Save size={16}/>{saving?'Saving...':'Save venue'}</button><button type="button" className="button secondary" disabled={saving} onClick={()=>setEditing(null)}>Cancel</button></div></form>
+  </Modal>}
+
+  {viewing&&<Modal title={viewing.name||'Venue details'} onClose={()=>setViewing(null)}><div className="venue-view-details">
+   <div className="venue-detail-grid"><div><small>ADDRESS</small><p>{viewing.address||'Not provided'}</p></div><div><small>CITY / STATE</small><p>{[viewing.city,viewing.state].filter(Boolean).join(', ')||'Not provided'}</p></div><div><small>CONTACT</small><p>{viewing.contact||'Not provided'}</p></div><div><small>STATUS</small><p>{viewing.status}</p></div></div>
+   {viewing.mapUrl&&<a className="button secondary" href={viewing.mapUrl} target="_blank" rel="noreferrer"><MapPinned size={16}/> Open map</a>}
+   <div className="screen-list-heading"><div><h3>Screens</h3><p className="muted">Open a screen to manage its seating layout.</p></div><button className="button small" type="button" onClick={()=>void addScreen(viewing)}><Plus size={15}/> Add screen</button></div>
+   {data.screens.filter(screen=>screen.theatreId===viewing.id).length?<div className="screen-cards">{data.screens.filter(screen=>screen.theatreId===viewing.id).map(screen=><article className="screen-card venue-screen-card" key={screen.id}><Armchair/><div className="venue-screen-copy"><strong>{screen.name}</strong><small>Screen {screen.number} · {screen.seats.length} seats · {screen.status}</small></div><div className="venue-screen-actions"><button type="button" className="button secondary small" onClick={()=>setViewingScreen(screen)}><Eye size={14}/> View</button><button type="button" className="button secondary small" onClick={()=>setEditingScreen({...screen})}><Pencil size={14}/> Edit</button><button type="button" className="button secondary small venue-delete-button" onClick={()=>setDeletingScreen(screen)}><Trash2 size={14}/> Delete</button><Link className="button secondary small" to={`/admin/venues/${viewing.id}/screens/${screen.id}`} onClick={()=>setViewing(null)}><ChevronRight size={15}/> Layout</Link></div></article>)}</div>:<p className="muted">No screens have been added yet.</p>}
+   <div className="button-row"><button className="button secondary" type="button" onClick={()=>startEdit(viewing)}><Pencil size={15}/> Edit venue</button><button className="button secondary venue-delete-button" type="button" onClick={()=>setDeleting(viewing)}><Trash2 size={15}/> Delete venue</button></div>
+  </div></Modal>}
+
+  {viewingScreen&&<Modal title={viewingScreen.name||'Screen details'} onClose={()=>setViewingScreen(null)}><div className="venue-view-details"><div className="venue-detail-grid"><div><small>SCREEN NUMBER</small><p>{viewingScreen.number}</p></div><div><small>STATUS</small><p>{viewingScreen.status}</p></div><div><small>SEATING GRID</small><p>{viewingScreen.rows} rows · {viewingScreen.seatsPerRow} seats per row</p></div><div><small>SEATS</small><p>{viewingScreen.seats.length} configured</p></div><div><small>LAYOUT VERSION</small><p>{viewingScreen.layoutVersion||1}</p></div><div><small>LAYOUT LOCK</small><p>{viewingScreen.layoutLocked?'Locked':'Unlocked'}</p></div></div><div className="button-row"><Link className="button" to={`/admin/venues/${viewingScreen.theatreId}/screens/${viewingScreen.id}`} onClick={()=>{setViewingScreen(null);setViewing(null);}}>Open screen workspace</Link><button type="button" className="button secondary" onClick={()=>{setEditingScreen({...viewingScreen});setViewingScreen(null);}}><Pencil size={15}/> Edit screen</button></div></div></Modal>}
+
+  {editingScreen&&<Modal title="Edit screen" onClose={()=>setEditingScreen(null)}><form className="entity-form venue-edit-form" onSubmit={saveScreen}><div className="form-grid"><label>Screen name<input required value={editingScreen.name} onChange={event=>setEditingScreen({...editingScreen,name:event.target.value})}/></label><label>Screen number<input required type="number" min="1" step="1" value={editingScreen.number} onChange={event=>setEditingScreen({...editingScreen,number:Number(event.target.value)})}/></label><label>Status<select value={editingScreen.status} onChange={event=>setEditingScreen({...editingScreen,status:event.target.value as Screen['status']})}><option value="ACTIVE">Active</option><option value="INACTIVE">Inactive</option></select></label></div><p className="muted">Use the screen workspace to edit rows, seats, and the visual layout.</p><div className="button-row"><button className="button"><Save size={16}/> Save screen</button><Link className="button secondary" to={`/admin/venues/${editingScreen.theatreId}/screens/${editingScreen.id}`} onClick={()=>setEditingScreen(null)}>Open layout</Link></div></form></Modal>}
+
+  {deleting&&<Modal title="Delete venue?" onClose={()=>setDeleting(null)}><p>Delete <strong>{deleting.name}</strong>? This cannot be undone. Venues with linked screens or shows may be rejected by the backend.</p><div className="button-row"><button type="button" className="button danger" onClick={()=>void remove()}>Delete venue</button><button type="button" className="button secondary" onClick={()=>setDeleting(null)}>Cancel</button></div></Modal>}
+  {deletingScreen&&<Modal title="Delete screen?" onClose={()=>setDeletingScreen(null)}><p>Delete <strong>{deletingScreen.name}</strong>? Any linked shows may prevent deletion.</p><div className="button-row"><button type="button" className="button danger" onClick={()=>void removeScreen()}>Delete screen</button><button type="button" className="button secondary" onClick={()=>setDeletingScreen(null)}>Cancel</button></div></Modal>}
+ </div>;
 }
