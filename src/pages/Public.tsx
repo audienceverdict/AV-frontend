@@ -72,6 +72,9 @@ export function Home(){
 }function HowItWorks(){return <section className="section how-section"><SectionHeading eyebrow="FROM THE FIRST FRAME TO YOUR FINAL WORD" title="Your movie. Your experience. Your verdict."/><div className="steps">{[[Search,'Find your film','Discover a story that speaks to you.'],[Film,'Explore the movie','Watch the trailer. Get to know the story.'],[Ticket,'Save your seat','Choose your screening and book.'],[Play,'Live the experience','Let the big screen take you places.'],[MessageSquare,'Share your verdict','Tell the world what you think.']].map(([Icon,title,body],i)=>{const I=Icon as typeof Search;return <div className="step" key={i}><div><I size={23}/><span>0{i+1}</span></div><h3>{String(title)}</h3><p>{String(body)}</p></div>})}</div></section>}
 export function Movies(){
  const {data,dataLoading,dataError,reloadData}=useApp();
+ const location=useLocation();
+ const catalogVisit=useRef('');
+ useEffect(()=>{if(catalogVisit.current===location.key)return;catalogVisit.current=location.key;void reloadData();},[location.key]);
  const [searchParams,setSearchParams]=useSearchParams();
  const [query,setQuery]=useState(()=>searchParams.get('search')||'');
  useEffect(()=>{setQuery(searchParams.get('search')||'');setPage(0);},[searchParams]);

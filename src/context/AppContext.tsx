@@ -6,7 +6,7 @@ export function AppProvider({children}:{children:ReactNode}){
  const [data,setData]=useState(emptyData);const [user,setUser]=useState<User|null>(authService.current);const [authLoading,setAuthLoading]=useState(true);const [authError,setAuthError]=useState('');const [dataLoading,setDataLoading]=useState(true);const [dataError,setDataError]=useState('');
  useEffect(()=>{let active=true;const refresh=()=>setData(database.read());const auth=()=>{const next=authService.current();setUser(next);setAuthError('');};
  const restore=async()=>{try{await authService.restore();}catch(e){if(active&&((e as {status?:number}).status!==401)){const message=(e as Error).message;console.error('[auth] Session restore failed:',e);setAuthError(message);}}finally{if(active)setAuthLoading(false);}};
- database.removeLocal();window.addEventListener('av-change',refresh);window.addEventListener('av-auth-change',auth);window.addEventListener('storage',refresh);
+ window.addEventListener('av-change',refresh);window.addEventListener('av-auth-change',auth);window.addEventListener('storage',refresh);
  void loadBackendData().then(()=>{if(active){refresh();setDataError('');}}).catch(error=>{if(active){refresh();console.error('[api] Initial data load failed:',error);setDataError((error as Error).message);}}).finally(()=>{if(active)setDataLoading(false);});void restore();
  return()=>{active=false;window.removeEventListener('av-change',refresh);window.removeEventListener('av-auth-change',auth);window.removeEventListener('storage',refresh);};},[]);
  const reloadData=async()=>{setDataLoading(true);setDataError('');try{await reloadBackendData();setData(database.read());}catch(error){setDataError((error as Error).message);}finally{setDataLoading(false);}};

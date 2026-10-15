@@ -2,7 +2,7 @@
 
 React, TypeScript, Vite. Run `npm install`, then `npm run dev`; on PowerShell use `npm.cmd` if script execution is disabled. Start the backend as described in [../backend/README.md](../backend/README.md).
 
-Authentication uses email OTP, a name/mobile profile step for new accounts, JWTs, `/auth/me`, profile updates and backend-authorized admin user management. The token lives in sessionStorage for reloads within the tab; the user/role are loaded from the backend. Invalid/expired tokens clear the session. There is no fixed OTP or hardcoded admin number. Use the branded code email, or the development backend console when SMTP is not configured.
+Authentication uses the shared `/auth/otp` endpoints. New accounts verify email, provide a name and mobile, then verify the mobile by WhatsApp before registration. Returning users sign in with email OTP only. The token lives in sessionStorage for reloads within the tab; the user/role are loaded from the backend. Invalid/expired tokens clear the session. There is no fixed OTP or hardcoded admin number.
 
 ## Frontend audit (2026-10-03)
 
@@ -63,7 +63,7 @@ Every public route uses the shared `Layout` with header, navigation, main conten
 | `/movie/:movieId/reviews` | `Reviews` | No to read; login to write | Movie-filtered reviews and review form; submission uses review repository and pending state. |
 | `/reviews` | `Reviews` | No to read; login to write | Tabs, movie filter, written/video review cards; empty state. |
 | `/audience-verdict`, `/about` | `About` | No | Brand explanation, audience value cards, how-it-works and prototype note. |
-| `/login`, `/verify-otp` | `Login` | No | Email OTP request/verification and required name/mobile registration for new users; real auth API. |
+| `/login`, `/verify-otp` | `Login` | No | Returning users sign in with email OTP; new users verify email and WhatsApp OTP before account creation. |
 | `/my-bookings` | `Bookings` | User | Current-user bookings, cancel action, ticket links, empty state. Booking data is demo repository-backed. |
 | `/booking/:bookingId` | `DigitalTicket` | User/admin | Confirmation, ticket details, download/print; missing/unauthorized ticket empty state. |
 | `/profile` | `Profile` | User | Profile update through backend auth service. |
@@ -106,10 +106,11 @@ All auth and catalogue requests use `/api/v1`; Vite proxies `/api` to port 8080.
 
 | Endpoint(s) | Method | Use / payload |
 |---|---|---|
-| `/auth/email-otp/request` | POST | `{email}`; send sign-in code, including for a new account. |
-| `/auth/email-otp/verify` | POST | `{email, otp}`; signs in or begins registration. |
+| `/auth/otp/request`, `/auth/otp/verify` | POST | Login OTP uses `{destination}` and `{destination,otp}`; `destination` is the existing account email. |
+| `/auth/otp/registration/request`, `/verify` | POST | WhatsApp registration OTP uses `{destination}` and `{destination,otp}`; verification returns a mobile `registrationToken`. Only new mobile numbers can request this OTP. |
+| `/auth/otp/registration/email/request`, `/verify` | POST | Email registration OTP uses `{registrationToken,email}` and `{registrationToken,email,otp}`; verification returns an email proof token. |
 | `/auth/me` | GET, PUT | Restore/current user; PUT `{name,email|null}` for profile. |
-| `/auth/email-otp/register` | POST | `{email,name,mobile}` after verified email OTP. |
+| `/auth/otp/register` | POST | `{email,name,mobile,registrationToken,emailVerificationToken}` after both verifications. |
 | `/admin/users?page=…&size=20` | GET | Admin audience pages. |
 | `/admin/users/:id/role`, `/status` | PATCH | `{role}` or `{enabled}`. |
 | `/movies?size=200`, `/theatres?size=200` | GET | Paged catalogue; loader reads `content`. |
