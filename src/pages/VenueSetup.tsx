@@ -1,11 +1,12 @@
 import {useEffect, useState, type FormEvent} from 'react';
 import {Link} from 'react-router-dom';
-import {Armchair, Building2, ChevronRight, Eye, MapPinned, Pencil, Plus, Save, Trash2} from 'lucide-react';
+import {Armchair, Building2, Check, CircleX, ChevronRight, Eye, MapPinned, Pencil, Plus, Save, Trash2} from 'lucide-react';
 import {useApp} from '../context/AppContext';
 import {createScreen, database, loadTheatreScreens, repositories} from '../services/api';
-import {Empty, Modal, Notice, SectionHeading} from '../components/Common';
+import {Empty, MediaImage, Modal, Notice, SectionHeading} from '../components/Common';
 import type {Screen,Theatre} from '../types';
 import './venue-list.css';
+import venueBackdrop from '../../images/about-cinema-hero.png?url';
 
 const createVenue=():Theatre=>({id:crypto.randomUUID(),name:'',address:'',city:'Hyderabad',state:'Telangana',contact:'',status:'ACTIVE',mapUrl:'',media:[]});
 
@@ -67,11 +68,13 @@ export function VenueSetup(){
  const startEdit=(theatre?:Theatre)=>{setViewing(null);setEditing(theatre?{...theatre}:createVenue());setError('');setMessage('');};
 
  return <div className="admin-content venue-setup">
-  <div className="venue-list-heading"><SectionHeading eyebrow="VENUE MANAGEMENT" title="Venues" description="Review your theatres, open their details, and manage screens."/><button className="button" type="button" onClick={()=>startEdit()}><Plus size={17}/> Add venue</button></div>
+  <div className="venue-list-heading" style={{backgroundImage:'linear-gradient(90deg,rgba(7,13,22,.98),rgba(7,13,22,.75) 48%,rgba(7,13,22,.2)),url("'+venueBackdrop+'")'}}><SectionHeading eyebrow="VENUE MANAGEMENT" title="Venues" description="Review your theatres, open their details, and manage screens."/><button className="button" type="button" onClick={()=>startEdit()}><Plus size={17}/> Add Venue</button></div>
+  <div className="venue-stat-grid"><div className="venue-stat red"><Building2/><strong>{data.theatres.length}</strong><span>Total Venues</span></div><div className="venue-stat blue"><Armchair/><strong>{data.screens.length}</strong><span>Total Screens</span></div><div className="venue-stat green"><Check/><strong>{data.theatres.filter(item=>item.status==='ACTIVE').length}</strong><span>Active Venues</span></div><div className="venue-stat amber"><CircleX/><strong>{data.theatres.filter(item=>item.status!=='ACTIVE').length}</strong><span>Inactive Venues</span></div></div>
   {message&&<Notice>{message}</Notice>}{error&&<Notice error>{error}</Notice>}
   {data.theatres.length?<div className="venue-cards">{data.theatres.map(theatre=>{
    const screens=data.screens.filter(screen=>screen.theatreId===theatre.id);
    return <article className="venue-card" key={theatre.id}>
+    <div className="venue-card-art"><MediaImage url={theatre.media?.find(item=>item.type==='IMAGE')?.url||''} alt={`${theatre.name} venue`} showFallbackLink={false}/><span className={`status ${theatre.status.toLowerCase()}`}>{theatre.status}</span></div>
     <div className="venue-card-icon"><Building2 size={22}/></div>
     <div className="venue-card-content"><div className="venue-card-title"><h3>{theatre.name}</h3><span className={`status ${theatre.status.toLowerCase()}`}>{theatre.status}</span></div>
      <p>{theatre.address}</p><div className="venue-card-meta"><span>{theatre.city}{theatre.state?`, ${theatre.state}`:''}</span><span>{screens.length} {screens.length===1?'screen':'screens'}</span>{theatre.contact&&<span>{theatre.contact}</span>}</div>

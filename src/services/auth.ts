@@ -37,5 +37,7 @@ export interface UserPage {content:User[];totalPages:number;totalElements:number
 export const adminUsers={
  list:(page=0)=>request<UserPage>(`/admin/users?page=${page}&size=20`),
  role:(id:string,role:'USER'|'ADMIN')=>request<User>(`/admin/users/${encodeURIComponent(id)}/role`,{method:'PATCH',body:JSON.stringify({role})}),
- status:(id:string,enabled:boolean)=>request<User>(`/admin/users/${encodeURIComponent(id)}/status`,{method:'PATCH',body:JSON.stringify({enabled})})
+ status:(id:string,enabled:boolean)=>request<User>(`/admin/users/${encodeURIComponent(id)}/status`,{method:'PATCH',body:JSON.stringify({enabled})}),
+ additionalRoles:(id:string,roles:string[],verifierShowIds:string[])=>request<User>(`/admin/users/${encodeURIComponent(id)}/additional-roles`,{method:'PUT',body:JSON.stringify({roles,verifierShowIds})}),
+ verifierShows:(id:string)=>request<unknown>(`/admin/users/${encodeURIComponent(id)}/verifier-shows`)
 };

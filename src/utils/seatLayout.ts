@@ -9,5 +9,18 @@ export function normalizeSeatLayout(seats:any[]=[],columns=12){
   const number=(numbers.get(item.row)||0)+1;numbers.set(item.row,number);
   labels.set(item.index,`${rowLabel(rowNames.get(item.row)||item.row)}${number}`);
  }
- return positioned.map(({seat,index,row,column})=>{const label=labels.get(index)!;return {...seat,id:seat.id,label,backendId:seat.backendId||seat.id,row,column};});
+ return positioned.map(({seat,index,row,column})=>{const generated=labels.get(index)!;const supplied=String(seat.label||'').trim();const label=supplied&&!isOpaqueSeatId(supplied)?supplied:generated;return {...seat,id:seat.id,label,backendId:seat.backendId||seat.id,row,column};});
+}
+
+function isOpaqueSeatId(value:string){return /^[{]?[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}[}]?$/i.test(value);}
+
+export function createSeatLabelMap(seats:any[]=[],columns=12):Record<string,string>{
+ const normalized=normalizeSeatLayout(seats,columns);
+ const labels:Record<string,string>={};
+ seats.forEach((seat,index)=>{
+  const label=normalized[index]?.label;
+  if(!label)return;
+  for(const key of [seat.id,seat.seatId,seat.backendId,seat.code])if(key!==undefined&&key!==null&&String(key).trim())labels[String(key)]=label;
+ });
+ return labels;
 }

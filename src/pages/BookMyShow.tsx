@@ -3,6 +3,7 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import {ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, Film, MapPin, Monitor, Ticket, Users, ShieldCheck, Armchair, ChevronLeft, ChevronRight, Wallet} from 'lucide-react';
 import {useApp} from '../context/AppContext';
 import {createBooking, createSeatHold, getShowAvailability, joinWaitingList, releaseSeatHold} from '../services/api';
+import {normalizeSeatLayout} from '../utils/seatLayout';
 import {Empty, Notice, Poster, date, money} from '../components/Common';
 import '../booking-page.css';
 import termsHeroImage from '../../images/booking-terms-hero.png?url';
@@ -49,7 +50,7 @@ export function BookMyShow() {
 
   useEffect(()=>{if(cities.length&&!city)setCity(cities.includes('Hyderabad')?'Hyderabad':cities[0]);},[cities,city]);
   useEffect(()=>{if(dates.length&&!dates.includes(day))setDay(dates[0]);},[dates,day]);
-  useEffect(()=>{if(!showId){setVersionSeats(null);setAvailabilityScreen(null);setBackendBooked([]);setAvailabilityError('');setAvailabilityColumns(0);return;}let active=true;setVersionSeats(null);setAvailabilityScreen(null);setBackendBooked([]);setAvailabilityError('');setAvailabilityColumns(0);getShowAvailability(showId).then(result=>{if(active){const layout=result.layout||{};setAvailabilityScreen(result.screen||null);setBackendBooked([...(result.bookedSeatIds||[]),...(result.reservedSeatIds||[]),...(result.heldSeatIds||[])]);setAvailabilityColumns(Number(result.screen?.seatsPerRow||layout.version?.seatsPerRow)||0);const layoutSeats=Array.isArray(layout.seats)?layout.seats:[];setVersionSeats(layoutSeats.map((seat:any)=>({...seat,row:seat.rowNumber,column:seat.columnNumber})));}}).catch(reason=>{if(active){setVersionSeats(null);setBackendBooked([]);setAvailabilityError((reason as Error).message);}});return()=>{active=false;};},[showId]);
+  useEffect(()=>{if(!showId){setVersionSeats(null);setAvailabilityScreen(null);setBackendBooked([]);setAvailabilityError('');setAvailabilityColumns(0);return;}let active=true;setVersionSeats(null);setAvailabilityScreen(null);setBackendBooked([]);setAvailabilityError('');setAvailabilityColumns(0);getShowAvailability(showId).then(result=>{if(active){const layout=result.layout||{};setAvailabilityScreen(result.screen||null);setBackendBooked([...(result.bookedSeatIds||[]),...(result.reservedSeatIds||[]),...(result.heldSeatIds||[])]);const columns=Number(result.screen?.seatsPerRow||layout.version?.seatsPerRow)||0;setAvailabilityColumns(columns);const layoutSeats=Array.isArray(layout.seats)?layout.seats:[];setVersionSeats(normalizeSeatLayout(layoutSeats,columns||12));}}).catch(reason=>{if(active){setVersionSeats(null);setBackendBooked([]);setAvailabilityError((reason as Error).message);}});return()=>{active=false;};},[showId]);
   useEffect(()=>{if(!holdExpiresAt){setHoldRemaining(0);return;}const tick=()=>setHoldRemaining(Math.max(0,holdExpiresAt-Date.now()));tick();const timer=window.setInterval(tick,1000);return()=>window.clearInterval(timer);},[holdExpiresAt]);
   useEffect(()=>{if(!confirming||!holdExpiresAt||Date.now()<holdExpiresAt)return;const hold=activeHoldRef.current;activeHoldRef.current=null;if(hold)void releaseSeatHold(hold.showId,hold.seatIds);setHoldExpiresAt(null);setSelectedSeats([]);setAcceptedTerms([]);setConfirming(false);setError('Your seat hold expired. Please select seats again.');},[confirming,holdExpiresAt,holdRemaining]);
   useEffect(()=>()=>{const hold=activeHoldRef.current;if(hold)void releaseSeatHold(hold.showId,hold.seatIds);},[]);
@@ -63,7 +64,7 @@ export function BookMyShow() {
   const soldOut=Boolean(show&&positionedSeats.length>0&&availableSeats.length===0);
   const used=booked.filter(booking=>booking.snapshot.mobile===user.mobile).reduce((total,booking)=>total+booking.ticketCount,0);
   const amount=show?.ticketType==='PAID'?selectedSeats.reduce((sum,id)=>{const seat=positionedSeats.find(item=>item.id===id);return sum+(show.seatPrices?.[seat?.category||'']??show.ticketPrice);},0):0;
-  const selectedSeatLabels=selectedSeats.map(id=>positionedSeats.find(seat=>seat.id===id)?.label||id);
+  const selectedSeatLabels=selectedSeats.map(id=>positionedSeats.find(seat=>seat.id===id)?.label||'Seat label unavailable');
   const holdSeconds=Math.ceil(holdRemaining/1000);
   const holdClock=`${Math.floor(holdSeconds/60)}:${String(holdSeconds%60).padStart(2,'0')}`;
   const holdDurationMinutes=Math.max(1,Number(show?.holdMinutes)||5);
